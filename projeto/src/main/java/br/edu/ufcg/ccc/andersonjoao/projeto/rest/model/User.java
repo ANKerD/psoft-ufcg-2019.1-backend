@@ -3,8 +3,6 @@ package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 import lombok.Data;
 import org.hibernate.annotations.Entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
@@ -17,6 +15,8 @@ public class User {
     private String lastName;
     private String firstName;
     private String password;
+
+    public User() {}
 
     public User(String email, String lastName, String firstName, String password) {
         this.email = email;
