@@ -1,7 +1,11 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.InvalidDataException;
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,38 +21,38 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/auth")
-public class LoginController {
+public class AuthController {
 
     private final String TOKEN_KEY = "banana";
-    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+\\.([a-z]+)?$");;
+    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+)?$");
 
     @Autowired
     private UserService userService;
 
-
+    @ApiOperation(value="Registra um usuário")
     @PostMapping("/register")
-    public LoginResponse register(@RequestBody User user) throws ServletException {
+    public LoginResponse register(@RequestBody User user) {
 
         // verificacoes
 
         // Verifica se senha satisfaz determinadas condicoes
-        if(user.getPassword() != null && user.getPassword().trim().length() > 0) {
-            throw new ServletException("Senha inválida!");
+        if(user.getPassword() == null || user.getPassword().trim().length() == 0) {
+            throw new InvalidDataException("Senha inválida!");
         }
 
         // Verifica se email satisfaz determinadas condicoes
-        if(user.getEmail() != null && emailPattern.matcher(user.getEmail()).find()) {
-            throw new ServletException("Email inválido!");
+        if(user.getEmail() == null || !emailPattern.matcher(user.getEmail()).find()) {
+            throw new InvalidDataException("Email inválido!");
         }
 
         // Verifica se firstName satisfaz determinadas condicoes
-        if(user.getFirstName() != null && user.getFirstName().trim().length() > 0) {
-            throw new ServletException("Primeiro nome inválido!");
+        if(user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
+            throw new InvalidDataException("Primeiro nome inválido!");
         }
 
         // Verifica se lastName satisfaz determinadas condicoes
-        if(user.getLastName() != null && user.getLastName().trim().length() > 0) {
-            throw new ServletException("Último nome inválido!");
+        if(user.getLastName() == null || user.getLastName().trim().length() == 0) {
+            throw new InvalidDataException("Último nome inválido!");
         }
 
         // Recupera o usuario
@@ -56,27 +60,26 @@ public class LoginController {
 
         // Verifica se o email já está sendo utilizado
         if(authUser != null) {
-            throw new ServletException("Já existe um usuario com esse email!");
+            throw new InvalidDataException("Já existe um usuario com esse email!");
         }
+
+        user.setPassword(user.getPassword().trim());
 
         User userRegistered = userService.save(user);
 
         return this.authenticate(userRegistered);
     }
 
+    @ApiOperation(value="Autentica um usuário")
     @PostMapping("/login")
-    public LoginResponse authenticate(@RequestBody User user) throws ServletException {
+    public LoginResponse authenticate(@RequestBody User user) {
 
         // Recupera o usuario
         User authUser = userService.findByEmail(user.getEmail());
 
         // verificacoes
-        if(authUser == null) {
-            throw new ServletException("Usuario nao encontrado!");
-        }
-
-        if(!authUser.getPassword().equals(user.getPassword())) {
-            throw new ServletException("Senha invalida!");
+        if(authUser == null || !authUser.getPassword().equals(user.getPassword().trim())) {
+            throw new WrongCredentialsException("Usuario e/ou senha inválidos!");
         }
 
         String token = Jwts.builder().

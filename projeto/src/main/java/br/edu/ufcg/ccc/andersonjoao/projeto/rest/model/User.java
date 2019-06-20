@@ -1,8 +1,8 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 
 import lombok.Data;
-import org.hibernate.annotations.Entity;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Data
