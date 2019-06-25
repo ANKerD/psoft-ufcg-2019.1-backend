@@ -22,7 +22,7 @@ public class SubjectsController {
     private SubjectService subjectService;
 
     @ApiOperation(value="Pega todas as disciplinas")
-    @GetMapping("/")
+    @GetMapping("/find/")
     public ArrayList<Subject> allSubjects() {
         return this.findSubject("");
     }
@@ -34,7 +34,7 @@ public class SubjectsController {
     }
 
     @ApiOperation(value="Pega disciplina por id")
-    @GetMapping("/{id}")
+    @GetMapping("/byId/{id}")
     public Subject findSubjectByid(@PathVariable long id) {
         return subjectService.findById(id);
     }
