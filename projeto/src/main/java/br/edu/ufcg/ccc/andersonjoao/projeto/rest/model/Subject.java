@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.ArrayList;
 
 @Data
 @Entity
@@ -16,10 +17,13 @@ public class Subject {
     private long id;
 
     private String nome;
+    private ArrayList<Like> likes;
+    private ArrayList<Double> ratings;
+    private ArrayList<Comment> comments;
 
-    public Subject() {}
-
-    public Subject(String nome) {
-        this.nome = nome;
+    public Subject() {
+        this.likes = new ArrayList<>();
+        this.ratings = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 }

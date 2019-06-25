@@ -40,26 +40,6 @@ public class SubjectsController {
     }
     /*
     @Data
-    private class SubjectProfile {
-
-        private String nome;
-        private long id;
-        private long likes;
-        private long dislikes;
-        private double rating;
-        private List<Comment> comments;
-
-        public SubjectProfile(String nome, long id, long likes, long dislikes, double rating, List<Comment> comments) {
-            this.nome = nome;
-            this.id = id;
-            this.likes = likes;
-            this.dislikes = dislikes;
-            this.rating = rating;
-            this.comments = comments;
-        }
-    }
-
-    @Data
     private class Comment {
 
         private long id;
