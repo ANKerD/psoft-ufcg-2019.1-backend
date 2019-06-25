@@ -1,6 +1,10 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Subject;
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.SubjectService;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,33 +18,27 @@ import java.util.List;
 @RequestMapping("/subjects")
 public class SubjectsController {
 
+    @Autowired
+    private SubjectService subjectService;
+
+    @ApiOperation(value="Pega todas as disciplinas")
     @GetMapping("/")
-    public List<String> allSubjects() {
-        return new ArrayList<String>();
+    public ArrayList<Subject> allSubjects() {
+        return this.findSubject("");
     }
 
+    @ApiOperation(value="Pega disciplinas que possuem substr como substring")
     @GetMapping("/find/{substr}")
-    public List<String> findSubject(@PathVariable String substr) {
-        return new ArrayList<String>();
+    public ArrayList<Subject> findSubject(@PathVariable String substr) {
+        return subjectService.findBySubstring(substr);
     }
 
+    @ApiOperation(value="Pega disciplina por id")
     @GetMapping("/{id}")
-    public String findSubjectByid(@PathVariable String id) {
-        return "Work in progress dude";
+    public Subject findSubjectByid(@PathVariable long id) {
+        return subjectService.findById(id);
     }
-
-    @Data
-    private class Subject {
-
-        private String nome;
-        private long id;
-
-        public Subject(String nome, long id) {
-            this.nome = nome;
-            this.id = id;
-        }
-    }
-
+    /*
     @Data
     private class SubjectProfile {
 
@@ -78,5 +76,5 @@ public class SubjectsController {
             this.comments = comments;
             this.when = when;
         }
-    }
+    }*/
 }
