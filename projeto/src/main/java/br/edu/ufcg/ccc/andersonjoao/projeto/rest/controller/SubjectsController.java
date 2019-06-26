@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class SubjectsController {
 
     @ApiOperation(value="Pega todas as disciplinas")
     @GetMapping("/find/")
-    public ArrayList<SubjectsFindResponse> allSubjects() {
+    public List<SubjectsFindResponse> allSubjects() {
         return this.findSubject("");
     }
 
@@ -38,11 +37,12 @@ public class SubjectsController {
     }
 
     @ApiOperation(value="Pega disciplina por id")
-    @GetMapping("/byId/{id}")
+    @GetMapping("/{id}")
     public Subject findSubjectByid(@PathVariable long id) {
         return subjectService.findById(id);
     }
 
+    @Data
     private class SubjectsFindResponse {
         private Long id;
         private String name;

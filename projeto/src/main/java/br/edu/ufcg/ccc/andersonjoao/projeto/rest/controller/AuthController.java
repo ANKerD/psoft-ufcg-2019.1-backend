@@ -4,8 +4,8 @@ import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.UserService;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.ServletException;
 import java.util.Date;
 
 @RestController
@@ -93,8 +91,9 @@ public class AuthController {
 
     }
 
+    @Data
     private class LoginResponse {
-        public String token;
+        private String token;
 
         public LoginResponse(String token) {
             this.token = token;
