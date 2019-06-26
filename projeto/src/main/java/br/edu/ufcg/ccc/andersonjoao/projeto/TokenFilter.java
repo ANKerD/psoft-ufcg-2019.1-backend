@@ -4,7 +4,6 @@ package br.edu.ufcg.ccc.andersonjoao.projeto;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.token.InvalidTokenException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;

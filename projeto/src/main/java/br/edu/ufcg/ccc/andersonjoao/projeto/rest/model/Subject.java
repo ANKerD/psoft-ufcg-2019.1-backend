@@ -16,7 +16,7 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String nome;
+    private String name;
     private ArrayList<Like> likes;
     private ArrayList<Double> ratings;
     private ArrayList<Comment> comments;

@@ -1,5 +1,5 @@
 
-INSERT INTO subject (nome) VALUES
+INSERT INTO subject (name) VALUES
     ('ADMINISTRAÇÃO'),
     ('ADMINISTRAÇÃO DE SISTEMAS'),
     ('ADMINISTRAÇÃO DE SISTEMAS DE INFORMAÇÃO'),

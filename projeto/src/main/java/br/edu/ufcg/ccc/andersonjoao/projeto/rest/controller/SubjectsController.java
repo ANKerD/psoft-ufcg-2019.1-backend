@@ -23,20 +23,34 @@ public class SubjectsController {
 
     @ApiOperation(value="Pega todas as disciplinas")
     @GetMapping("/find/")
-    public ArrayList<Subject> allSubjects() {
+    public ArrayList<SubjectsFindResponse> allSubjects() {
         return this.findSubject("");
     }
 
     @ApiOperation(value="Pega disciplinas que possuem substr como substring")
     @GetMapping("/find/{substr}")
-    public ArrayList<Subject> findSubject(@PathVariable String substr) {
-        return subjectService.findBySubstring(substr);
+    public ArrayList<SubjectsFindResponse> findSubject(@PathVariable String substr) {
+        ArrayList resp = new ArrayList();
+        for (Subject subj : subjectService.findBySubstring(substr))
+            resp.add(new SubjectsFindResponse(subj.getId(), subj.getName()));
+
+        return resp;
     }
 
     @ApiOperation(value="Pega disciplina por id")
     @GetMapping("/byId/{id}")
     public Subject findSubjectByid(@PathVariable long id) {
         return subjectService.findById(id);
+    }
+
+    private class SubjectsFindResponse {
+        private Long id;
+        private String name;
+
+        public SubjectsFindResponse(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
     }
     /*
     @Data

@@ -15,7 +15,7 @@ public class ProjetoApplication {
 	public FilterRegistrationBean filterJwt() {
 		FilterRegistrationBean filterRb = new FilterRegistrationBean();
 		filterRb.setFilter(new TokenFilter());
-		filterRb.addUrlPatterns("/private");
+		filterRb.addUrlPatterns("/comments/*");
 		return filterRb;
 	}
 

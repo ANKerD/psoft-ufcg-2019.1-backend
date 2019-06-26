@@ -1,5 +1,6 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.dao;
 
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Comment;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,10 +12,10 @@ import java.util.ArrayList;
 
 
 @Repository
-public interface SubjectDAO<T, ID extends Serializable> extends JpaRepository<Subject, Long> {
+public interface CommentDAO<T, ID extends Serializable> extends JpaRepository<Comment, Long> {
 
-    Subject findById(long id);
+    Comment findById(long id);
 
-    @Query(value="Select s from Subject s where s.name like %?1%")
-    ArrayList<Subject> findBySubstring(@Param("substring") String substring);
+    @Query(value="Select c from Comment c where c.sujectId=:subjectId")
+    ArrayList<Comment> findBySubject(@Param("subjectId") long subjectId);
 }

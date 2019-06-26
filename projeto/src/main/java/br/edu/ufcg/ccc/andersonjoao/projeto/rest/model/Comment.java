@@ -18,19 +18,22 @@ public class Comment {
     private Long id;
 
     private String content;
-    private Long authorId;
+    private String authorEmail;
+    private Long sujectId;
     private Long answerTo;
 
 
-    public Comment(String content, long authorId, long answerTo) {
+    public Comment(String content, String authorId, long sujectId, long answerTo) {
         this.content = content;
-        this.authorId = authorId;
+        this.authorEmail = authorEmail;
+        this.sujectId = sujectId;
         this.answerTo = answerTo;
     }
 
-    public Comment(String content, long authorId) {
+    public Comment(String content, String authorEmail, long sujectId) {
         this.content = content;
-        this.authorId = authorId;
+        this.authorEmail = authorEmail;
+        this.sujectId = sujectId;
     }
 
     public Comment() {}
