@@ -16,8 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/subjectsProfile")
@@ -34,28 +36,89 @@ public class ProfileController {
 
     @ApiOperation(value="Pega o profile de uma disciplina com id dela")
     @GetMapping("/{subjectId}")
-    public ResponseEntity<SubjectResponse> findBySubject(HttpServletRequest request, @PathVariable Long subjectId, @RequestBody CommentRequest comment) {
-        String userEmail = UserData.getUserEmail(request);
-//        Comment newComment = new Comment();
-        String content = , String authorId, long subjectId, long answerTo)
-
-//        SubjectResponse response = new SubjectResponse(id, name, usersLiked, comments);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Adiciona um comentario a disciplina")
-    @PostMapping("/{subjectId}/comment")
-    public ResponseEntity<SubjectResponse> addCommentToProfile(HttpServletRequest request, @PathVariable Long subjectId) {
+    public ResponseEntity<SubjectResponse> findBySubject(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
         ArrayList<CommentsWithFlag> comments = getSubjectComments(userEmail, subjectId);
 
         Subject subject = subjectService.findById(subjectId);
+
+        long id = subject.getId();
+        String name = subject.getName();
+        Set<String> usersLiked = subject.getUsersLiked();
+
+        SubjectResponse response = new SubjectResponse(id, name, usersLiked, comments);
+        if (response.getUsersLiked().contains(userEmail)) {
+            response.setLiked(true);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Adiciona um comentario a disciplina")
+    @PostMapping("/{subjectId}/comment")
+    public ResponseEntity<Comment> addCommentToProfile(HttpServletRequest request,
+                                                       @PathVariable Long subjectId,
+                                                       @RequestBody CommentRequest comment) {
+        String userEmail = UserData.getUserEmail(request);
+        ArrayList<CommentsWithFlag> comments = getSubjectComments(userEmail, subjectId);
+
+        String content = comment.getContent();
+        Long answerTo = comment.getAnswerTo();
+
+        Comment newComment = new Comment(content, userEmail, subjectId, answerTo);
+        commentsService.save(newComment);
+        return new ResponseEntity<>(newComment, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{subjectId}/{commentId}")
+    public void deleteComment(HttpServletRequest request,
+                              @PathVariable("subjectId") Long subjectId,
+                              @PathVariable("commentId") Long commentId) {
+        String userEmail = UserData.getUserEmail(request);
+        Comment comment = commentsService.findById(commentId);
+        if (!comment.getAuthorEmail().equals(userEmail)) {
+            // TODO: explode
+            return;
+        }
+
+        commentsService.delete(comment);
+    }
+
+    @ApiOperation(value = "Da like na disciplina")
+    @PostMapping("/{subjectId}/like")
+    public void like(HttpServletRequest request, @PathVariable Long subjectId) {
+        String userEmail = UserData.getUserEmail(request);
+        Subject subject = subjectService.findById(subjectId);
+
+        Set<String> likes = getNotNull(subject.getUsersLiked());
+        likes.add(userEmail);
+        subject.setUsersLiked(likes);
+
+        subjectService.update(subject);
+    }
+
+    @ApiOperation(value = "Tira like na disciplina")
+    @DeleteMapping("/{subjectId}/like")
+    public void dislike(HttpServletRequest request, @PathVariable Long subjectId) {
+        String userEmail = UserData.getUserEmail(request);
+        Subject subject = subjectService.findById(subjectId);
+
+        Set<String> likes = getNotNull(subject.getUsersLiked());
+
+        if (likes.contains(userEmail)) {
+            likes.remove(userEmail);
+        }
+
+        subject.setUsersLiked(likes);
+        subjectService.update(subject);
     }
 
     private ArrayList<CommentsWithFlag> getSubjectComments(String email, Long subjectId) {
         ArrayList resp = new ArrayList();
         for (Comment comm : commentsService.findBySubject(subjectId)) {
             User user = userService.findByEmail(comm.getAuthorEmail());
+            if (!comm.getActive()) {
+                comm.setContent("");
+            }
             resp.add(new CommentsWithFlag(comm.getId(), comm.getContent(), user.getFirstName() + " " + user.getLastName(), comm.getAnswerTo(), comm.getAuthorEmail().equals(email)));
         }
         return resp;
@@ -83,11 +146,12 @@ public class ProfileController {
         private long id;
 
         private String name;
-        private HashSet<String> usersLiked = new HashSet<>();
+        private Set<String> usersLiked;
 
         private ArrayList<CommentsWithFlag> comments;
+        private boolean liked;
 
-        public SubjectResponse(long id, String name, HashSet<String> usersLiked, ArrayList<CommentsWithFlag> comments) {
+        public SubjectResponse(long id, String name, Set<String> usersLiked, ArrayList<CommentsWithFlag> comments) {
             this.id = id;
             this.name = name;
             this.usersLiked = usersLiked == null ? new HashSet<>() : usersLiked;
@@ -96,8 +160,10 @@ public class ProfileController {
     }
 
     @Data
-    private class CommentRequest {
+    private class CommentRequest implements Serializable {
+
         private String content;
+        private Long answerTo;
 
         public CommentRequest() {
         }
@@ -105,5 +171,14 @@ public class ProfileController {
         public CommentRequest(String content) {
             this.content = content;
         }
+
+        public CommentRequest(String content, Long answerTo) {
+            this.content = content;
+            this.answerTo = answerTo;
+        }
+    }
+
+    private Set<String> getNotNull(Set<String> set) {
+        return set == null ? new HashSet<>() : set;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -16,5 +17,7 @@ public interface CommentDAO<T, ID extends Serializable> extends JpaRepository<Co
 
     Comment findById(long id);
 
-    ArrayList<Comment> findBySubjectId(Long subjectId);
+    List<Comment> findBySubjectId(Long subjectId);
+
+    List<Comment> findByAnswerTo(Long answerTo);
 }

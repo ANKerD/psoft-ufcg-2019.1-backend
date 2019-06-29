@@ -23,4 +23,8 @@ public class SubjectService {
     public ArrayList<Subject> findBySubstring(String substring) { return this.subjectDAO.findBySubstring(substring.toUpperCase());}
 
     public Subject findById(long id) { return this.subjectDAO.findById(id);}
+
+    public void update(Subject subject) {
+        this.subjectDAO.save(subject);
+    }
 }

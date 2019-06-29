@@ -2,10 +2,7 @@ package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -20,6 +17,7 @@ public class Comment {
     private Long subjectId;
     private Long answerTo;
 
+    private Boolean active;
 
     public Comment(String content, String authorId, long subjectId, long answerTo) {
         this.content = content;
