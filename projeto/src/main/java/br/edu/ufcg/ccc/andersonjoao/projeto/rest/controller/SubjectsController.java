@@ -21,7 +21,7 @@ public class SubjectsController {
     private SubjectService subjectService;
 
     @ApiOperation(value="Pega todas as disciplinas")
-    @GetMapping("/find/")
+    @GetMapping("/find")
     public List<SubjectsFindResponse> allSubjects() {
         return this.findSubject("");
     }
@@ -52,23 +52,4 @@ public class SubjectsController {
             this.name = name;
         }
     }
-    /*
-    @Data
-    private class Comment {
-
-        private long id;
-        private String content;
-        private String author;
-        private List<Comment> comments;
-        private Date when;
-
-
-        public Comment(long id, String content, String author, List<Comment> comments, Date when) {
-            this.id = id;
-            this.content = content;
-            this.author = author;
-            this.comments = comments;
-            this.when = when;
-        }
-    }*/
 }

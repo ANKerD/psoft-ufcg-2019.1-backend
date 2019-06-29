@@ -97,3 +97,10 @@ INSERT INTO subject (name) VALUES
     ('VISÃO COMPUTACIONAL'),
     ('VISUALIZAÇÃO DE DADOS');
 
+insert into user values('a.kleber.d@gmail.com', 'Anderson', 'Dantas', '123');
+insert into user values('joaom@gmail.com', 'JMarcos', 'Lima', '123');
+insert into comment(author_email, content, subject_id) values
+    ('a.kleber.d@gmail.com', 'Trivial essa budega... reprovado', 7),
+    ('a.kleber.d@gmail.com', 'While(true) purint', 7);
+insert into comment(author_email, content, subject_id, answer_to)
+    values('joaom@gmail.com', 'desclassificado', 7, 2);

@@ -21,7 +21,7 @@ public class CommentService {
         this.commentDAO = commentDAO;
     }
 
-    public ArrayList<Comment> findBySubject(long subjectId) { return this.commentDAO.findBySubject(subjectId);}
+    public ArrayList<Comment> findBySubject(long subjectId) { return this.commentDAO.findBySubjectId(subjectId);}
 
     public Comment findById(long id) { return this.commentDAO.findById(id);}
 }

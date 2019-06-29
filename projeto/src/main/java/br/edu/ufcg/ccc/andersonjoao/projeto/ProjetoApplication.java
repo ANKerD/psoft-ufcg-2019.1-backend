@@ -16,6 +16,7 @@ public class ProjetoApplication {
 		FilterRegistrationBean filterRb = new FilterRegistrationBean();
 		filterRb.setFilter(new TokenFilter());
 		filterRb.addUrlPatterns("/comments/*");
+		filterRb.addUrlPatterns("/subjectsProfile/*");
 		return filterRb;
 	}
 

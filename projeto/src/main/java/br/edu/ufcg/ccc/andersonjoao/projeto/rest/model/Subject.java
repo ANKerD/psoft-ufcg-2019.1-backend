@@ -2,10 +2,7 @@ package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -19,12 +16,8 @@ public class Subject {
 
     private String name;
     private HashSet<String> usersLiked;
-    private ArrayList<Integer> ratings;
-    private ArrayList<Comment> comments;
 
     public Subject() {
         this.usersLiked = new HashSet<>();
-        this.ratings = new ArrayList<>();
-        this.comments = new ArrayList<>();
     }
 }
