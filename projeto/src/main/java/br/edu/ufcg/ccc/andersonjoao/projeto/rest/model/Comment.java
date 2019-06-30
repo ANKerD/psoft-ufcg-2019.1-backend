@@ -1,6 +1,7 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 
@@ -17,6 +18,7 @@ public class Comment {
     private Long subjectId;
     private Long answerTo;
 
+    @Column(columnDefinition = "boolean default true")
     private Boolean active;
 
     public Comment(String content, String authorId, long subjectId, long answerTo) {
@@ -32,5 +34,6 @@ public class Comment {
         this.subjectId = subjectId;
     }
 
-    public Comment() {}
+    public Comment() {
+    }
 }

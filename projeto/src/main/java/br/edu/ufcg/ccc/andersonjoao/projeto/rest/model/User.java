@@ -1,5 +1,7 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.model;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -11,10 +13,13 @@ import javax.persistence.Id;
 public class User {
 
     @Id
+    @ApiModelProperty(example = "a.kleber.d@gmail.com")
     private String email;
-
+    @ApiModelProperty(example = "Dantas")
     private String lastName;
+    @ApiModelProperty(example = "Anderson")
     private String firstName;
+    @ApiModelProperty(example = "123")
     private String password;
 
     public User() {}

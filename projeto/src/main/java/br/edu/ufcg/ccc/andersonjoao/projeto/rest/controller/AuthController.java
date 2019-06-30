@@ -1,6 +1,6 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
-import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.InvalidDataException;
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

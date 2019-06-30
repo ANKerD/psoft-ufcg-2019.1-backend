@@ -1,6 +1,6 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.exception;
 
-import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.InvalidDataException;
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.NotAuthorizedException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.token.InvalidTokenException;
 import org.springframework.http.HttpHeaders;
@@ -28,13 +28,19 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(InvalidDataException.class)
-    public ResponseEntity<CustomRestError> InvalidDataException(Exception ex, WebRequest request) {
+    public ResponseEntity<CustomRestError> handleInvalidDataException(Exception ex, WebRequest request) {
         CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<CustomRestError> InvalidTokenException(Exception ex, WebRequest request) {
+    public ResponseEntity<CustomRestError> handleInvalidTokenException(Exception ex, WebRequest request) {
+        CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<CustomRestError> handleNotAuthorizedException(Exception ex, WebRequest request) {
         CustomRestError errorMessage = new CustomRestError(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }

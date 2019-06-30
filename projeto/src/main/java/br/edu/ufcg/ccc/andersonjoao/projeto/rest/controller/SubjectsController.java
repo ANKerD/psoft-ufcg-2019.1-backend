@@ -36,12 +36,6 @@ public class SubjectsController {
         return resp;
     }
 
-    @ApiOperation(value="Pega disciplina por id")
-    @GetMapping("/{id}")
-    public Subject findSubjectByid(@PathVariable long id) {
-        return subjectService.findById(id);
-    }
-
     @Data
     private class SubjectsFindResponse {
         private Long id;

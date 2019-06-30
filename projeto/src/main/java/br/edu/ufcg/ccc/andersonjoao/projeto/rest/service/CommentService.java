@@ -30,11 +30,4 @@ public class CommentService {
         this.commentDAO.save(comment);
     }
 
-    public void delete(Comment comment) {
-        this.commentDAO.deleteById(comment.getId());
-        List<Comment> comments = this.commentDAO.findByAnswerTo(comment.getId());
-        for (Comment c : comments) {
-            this.delete(c);
-        }
-    }
 }

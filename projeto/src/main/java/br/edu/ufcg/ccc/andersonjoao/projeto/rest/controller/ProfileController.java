@@ -1,5 +1,6 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Comment;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Subject;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
@@ -38,16 +39,22 @@ public class ProfileController {
     @GetMapping("/{subjectId}")
     public ResponseEntity<SubjectResponse> findBySubject(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
-        ArrayList<CommentsWithFlag> comments = getSubjectComments(userEmail, subjectId);
+
+        if (userService.findByEmail(userEmail) == null) {
+            throw new InvalidDataException("O usuário que está sendo autenticado não existe");
+        }
 
         Subject subject = subjectService.findById(subjectId);
 
-        long id = subject.getId();
-        String name = subject.getName();
-        Set<String> usersLiked = subject.getUsersLiked();
+        if (subject == null) {
+            throw new InvalidDataException("Disciplina buscada não existe");
+        }
 
-        SubjectResponse response = new SubjectResponse(id, name, usersLiked, comments);
-        if (response.getUsersLiked().contains(userEmail)) {
+        ArrayList<CommentsWithFlag> comments = getSubjectComments(userEmail, subjectId);
+
+        Set<String> usersLiked = subject.getUsersLiked();
+        SubjectResponse response = new SubjectResponse(subjectId, subject.getName(), usersLiked.size(), comments);
+        if (usersLiked.contains(userEmail)) {
             response.setLiked(true);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -59,12 +66,26 @@ public class ProfileController {
                                                        @PathVariable Long subjectId,
                                                        @RequestBody CommentRequest comment) {
         String userEmail = UserData.getUserEmail(request);
-        ArrayList<CommentsWithFlag> comments = getSubjectComments(userEmail, subjectId);
+
+
+        if (comment.getAnswerTo() != null) {
+            Comment answerTo = commentsService.findById(comment.getAnswerTo());
+            if (answerTo == null || !answerTo.getSubjectId().equals(subjectId)) {
+                throw new InvalidDataException("Comentário que está sendo respondido não existe na disciplina especificada");
+            }
+        }
+
+        if (subjectId == null || subjectService.findById(subjectId) == null) {
+            throw new InvalidDataException("Disciplina que está sendo comentada não existe");
+        }
+
+        if (comment.getContent() == null || comment.getContent().length() > 150) {
+            throw new InvalidDataException("Comentário inválido ou maior que 150 caracteres");
+        }
 
         String content = comment.getContent();
-        Long answerTo = comment.getAnswerTo();
 
-        Comment newComment = new Comment(content, userEmail, subjectId, answerTo);
+        Comment newComment = new Comment(content, userEmail, subjectId, comment.getAnswerTo());
         commentsService.save(newComment);
         return new ResponseEntity<>(newComment, HttpStatus.OK);
     }
@@ -74,22 +95,37 @@ public class ProfileController {
                               @PathVariable("subjectId") Long subjectId,
                               @PathVariable("commentId") Long commentId) {
         String userEmail = UserData.getUserEmail(request);
+
         Comment comment = commentsService.findById(commentId);
-        if (!comment.getAuthorEmail().equals(userEmail)) {
-            // TODO: explode
-            return;
+
+        if (commentId == null || comment == null) {
+            throw new InvalidDataException("O comentário que está sendo removido não existe");
         }
 
-        commentsService.delete(comment);
+        if (subjectId == null || subjectService.findById(subjectId) == null || !comment.getSubjectId().equals(subjectId)) {
+            throw new InvalidDataException("A disciplina não condiz com o comentário a ser deletado");
+        }
+
+        if (!comment.getAuthorEmail().equals(userEmail)) {
+            throw new InvalidDataException("Não está autorizado a remover este comentário");
+        }
+
+        comment.setActive(false);
+
+        commentsService.save(comment);
     }
 
     @ApiOperation(value = "Da like na disciplina")
-    @PostMapping("/{subjectId}/like")
+    @PutMapping("/{subjectId}/like")
     public void like(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
         Subject subject = subjectService.findById(subjectId);
 
-        Set<String> likes = getNotNull(subject.getUsersLiked());
+        if (subjectId == null || subjectService.findById(subjectId) == null) {
+            throw new InvalidDataException("Disciplina que está recebendo like não existe");
+        }
+
+        Set<String> likes = subject.getUsersLiked();
         likes.add(userEmail);
         subject.setUsersLiked(likes);
 
@@ -97,12 +133,16 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Tira like na disciplina")
-    @DeleteMapping("/{subjectId}/like")
-    public void dislike(HttpServletRequest request, @PathVariable Long subjectId) {
+    @PutMapping("/{subjectId}/removeLike")
+    public void removeLike(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
         Subject subject = subjectService.findById(subjectId);
 
-        Set<String> likes = getNotNull(subject.getUsersLiked());
+        if (subject == null) {
+            throw new InvalidDataException("Disciplina cujo like deve ser removido não existe");
+        }
+
+        Set<String> likes = subject.getUsersLiked();
 
         if (likes.contains(userEmail)) {
             likes.remove(userEmail);
@@ -119,48 +159,51 @@ public class ProfileController {
             if (!comm.getActive()) {
                 comm.setContent("");
             }
-            resp.add(new CommentsWithFlag(comm.getId(), comm.getContent(), user.getFirstName() + " " + user.getLastName(), comm.getAnswerTo(), comm.getAuthorEmail().equals(email)));
+
+            resp.add(new CommentsWithFlag(comm.getId(), comm.getContent(), user.getFirstName() + " " + user.getLastName(), comm.getAnswerTo(), comm.getAuthorEmail().equals(email), comm.getActive()));
         }
         return resp;
     }
 
     @Data
-    private class CommentsWithFlag {
+    private static class CommentsWithFlag {
         private Long id;
         private String content;
         private String authorName;
         private Long answerTo;
         private boolean itsMine;
+        private boolean active;
 
-        public CommentsWithFlag(Long id, String content, String authorName, Long answerTo, boolean itsMine) {
+        public CommentsWithFlag(Long id, String content, String authorName, Long answerTo, boolean itsMine, boolean active) {
             this.id = id;
             this.content = content;
             this.authorName = authorName;
             this.answerTo = answerTo;
             this.itsMine = itsMine;
+            this.active = active;
         }
     }
 
     @Data
-    private class SubjectResponse {
+    private static class SubjectResponse {
         private long id;
 
         private String name;
-        private Set<String> usersLiked;
+        private int  usersLiked;
 
         private ArrayList<CommentsWithFlag> comments;
         private boolean liked;
 
-        public SubjectResponse(long id, String name, Set<String> usersLiked, ArrayList<CommentsWithFlag> comments) {
+        public SubjectResponse(long id, String name, int usersLiked, ArrayList<CommentsWithFlag> comments) {
             this.id = id;
             this.name = name;
-            this.usersLiked = usersLiked == null ? new HashSet<>() : usersLiked;
-            this.comments = comments == null ? new ArrayList<>() : comments;
+            this.usersLiked = usersLiked;
+            this.comments = comments;
         }
     }
 
     @Data
-    private class CommentRequest implements Serializable {
+    private static class CommentRequest implements Serializable {
 
         private String content;
         private Long answerTo;
