@@ -22,7 +22,7 @@ public class Comment {
     @Column(columnDefinition = "boolean default true")
     private Boolean active;
 
-    public Comment(String content, String authorId, long subjectId, long answerTo) {
+    public Comment(String content, String authorEmail, long subjectId, long answerTo) {
         this.content = content;
         this.authorEmail = authorEmail;
         this.subjectId = subjectId;
