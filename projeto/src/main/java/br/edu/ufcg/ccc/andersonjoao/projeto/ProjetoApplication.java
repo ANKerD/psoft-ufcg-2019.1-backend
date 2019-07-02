@@ -17,6 +17,7 @@ public class ProjetoApplication {
 		filterRb.setFilter(new TokenFilter());
 		filterRb.addUrlPatterns("/comments/*");
 		filterRb.addUrlPatterns("/subjectsProfile/*");
+		filterRb.addUrlPatterns("/subjects/ranking/*");
 		return filterRb;
 	}
 
