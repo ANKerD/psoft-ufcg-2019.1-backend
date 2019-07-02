@@ -14,6 +14,7 @@ public class Comment {
     private Long id;
 
     private String content;
+    @Column(nullable = false)
     private String authorEmail;
     private Long subjectId;
     private Long answerTo = null;
