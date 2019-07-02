@@ -19,4 +19,6 @@ public interface CommentDAO<T, ID extends Serializable> extends JpaRepository<Co
 
     List<Comment> findBySubjectId(Long subjectId);
 
+    Comment save(Comment comment);
+
 }

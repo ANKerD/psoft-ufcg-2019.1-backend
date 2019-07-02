@@ -26,8 +26,8 @@ public class CommentService {
 
     public Comment findById(long id) { return this.commentDAO.findById(id);}
 
-    public void save(Comment comment) {
-        this.commentDAO.save(comment);
+    public Comment save(Comment comment) {
+        return this.commentDAO.save(comment);
     }
 
 }

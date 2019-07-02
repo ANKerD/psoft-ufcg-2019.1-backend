@@ -62,12 +62,10 @@ public class ProfileController {
 
     @ApiOperation(value = "Adiciona um comentario a disciplina")
     @PostMapping("/{subjectId}/comment")
-    public ResponseEntity<Comment> addCommentToProfile(HttpServletRequest request,
+    public ResponseEntity<CommentsWithFlag> addCommentToProfile(HttpServletRequest request,
                                                        @PathVariable Long subjectId,
                                                        @RequestBody CommentRequest comment) {
         String userEmail = UserData.getUserEmail(request);
-
-
         if (comment.getAnswerTo() != null) {
             Comment answerTo = commentsService.findById(comment.getAnswerTo());
             if (answerTo == null || !answerTo.getSubjectId().equals(subjectId)) {
@@ -87,13 +85,16 @@ public class ProfileController {
 
         Comment newComment = null;
         if (comment.getAnswerTo() == null) {
-            newComment = new Comment(content, userEmail, subjectId);
+            newComment = commentsService.save(new Comment(content, userEmail, subjectId));
         } else {
-            newComment = new Comment(content, userEmail, subjectId, comment.getAnswerTo());
+            newComment = commentsService.save(new Comment(content, userEmail, subjectId, comment.getAnswerTo()));
         }
 
-        commentsService.save(newComment);
-        return new ResponseEntity<>(newComment, HttpStatus.OK);
+        User user = userService.findByEmail(userEmail);
+        String authorName = user.getFirstName() + " " + user.getLastName();
+
+        CommentsWithFlag respComment = new CommentsWithFlag(newComment.getId(), content, authorName, comment.getAnswerTo(), true, true);
+        return new ResponseEntity<>(respComment, HttpStatus.OK);
     }
 
     @DeleteMapping("/{subjectId}/comment/{commentId}")
