@@ -85,12 +85,18 @@ public class ProfileController {
 
         String content = comment.getContent();
 
-        Comment newComment = new Comment(content, userEmail, subjectId, comment.getAnswerTo());
+        Comment newComment = null;
+        if (comment.getAnswerTo() == null) {
+            newComment = new Comment(content, userEmail, subjectId);
+        } else {
+            newComment = new Comment(content, userEmail, subjectId, comment.getAnswerTo());
+        }
+
         commentsService.save(newComment);
         return new ResponseEntity<>(newComment, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{subjectId}/{commentId}")
+    @DeleteMapping("/{subjectId}/comment/{commentId}")
     public void deleteComment(HttpServletRequest request,
                               @PathVariable("subjectId") Long subjectId,
                               @PathVariable("commentId") Long commentId) {
@@ -116,7 +122,7 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Da like na disciplina")
-    @PutMapping("/{subjectId}/like")
+    @PostMapping("/{subjectId}/like")
     public void like(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
         Subject subject = subjectService.findById(subjectId);
@@ -133,7 +139,7 @@ public class ProfileController {
     }
 
     @ApiOperation(value = "Tira like na disciplina")
-    @PutMapping("/{subjectId}/removeLike")
+    @DeleteMapping("/{subjectId}/like")
     public void removeLike(HttpServletRequest request, @PathVariable Long subjectId) {
         String userEmail = UserData.getUserEmail(request);
         Subject subject = subjectService.findById(subjectId);

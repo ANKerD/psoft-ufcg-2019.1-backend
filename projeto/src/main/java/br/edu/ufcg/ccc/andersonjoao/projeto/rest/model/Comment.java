@@ -16,7 +16,7 @@ public class Comment {
     private String content;
     private String authorEmail;
     private Long subjectId;
-    private Long answerTo;
+    private Long answerTo = null;
 
     @Column(columnDefinition = "boolean default true")
     private Boolean active;
@@ -26,12 +26,14 @@ public class Comment {
         this.authorEmail = authorEmail;
         this.subjectId = subjectId;
         this.answerTo = answerTo;
+        this.active = true;
     }
 
     public Comment(String content, String authorEmail, long subjectId) {
         this.content = content;
         this.authorEmail = authorEmail;
         this.subjectId = subjectId;
+        this.active = true;
     }
 
     public Comment() {
