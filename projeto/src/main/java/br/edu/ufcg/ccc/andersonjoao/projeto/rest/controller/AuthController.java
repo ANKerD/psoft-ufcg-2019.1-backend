@@ -20,6 +20,9 @@ import java.util.Date;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final int SECOND = 1000;
+    private final int MINUTE = 60 * SECOND;
+    private final int HOUR = 60 * MINUTE;
 
     private final String TOKEN_KEY = "banana";
     private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+)?$");
@@ -83,7 +86,7 @@ public class AuthController {
         String token = Jwts.builder().
                 setSubject(authUser.getEmail()).
                 signWith(SignatureAlgorithm.HS512, TOKEN_KEY).
-                setExpiration(new Date(System.currentTimeMillis() + 500*60 * 60 * 1000))
+                setExpiration(new Date(System.currentTimeMillis() + 2 * HOUR))
                 .compact();
 
         return new LoginResponse(token);
