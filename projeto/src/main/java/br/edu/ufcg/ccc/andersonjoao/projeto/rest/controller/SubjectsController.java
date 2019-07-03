@@ -42,7 +42,7 @@ public class SubjectsController {
 
     @ApiOperation(value="Pega disciplinas que possuem substr como substring")
     @GetMapping("/ranking")
-    public ArrayList<SubjectsRankingResponse> findSubject(@RequestParam(name="type", required=true) String type, @RequestParam(name="desc", required=true) boolean desc) {
+    public ArrayList<SubjectsRankingResponse> findOrdered(@RequestParam(name="type", required=true) String type, @RequestParam(name="desc", required=true) boolean desc) {
         ArrayList resp = new ArrayList();
         for (Subject subj : subjectService.findBySubstring("")) {
             Integer comments = commentService.findBySubject(subj.getId()).size();
