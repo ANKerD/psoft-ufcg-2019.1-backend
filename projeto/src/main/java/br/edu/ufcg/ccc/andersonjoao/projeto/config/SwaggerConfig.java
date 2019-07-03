@@ -1,5 +1,6 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.config;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,6 +40,7 @@ public class SwaggerConfig {
                 .securitySchemes(Lists.newArrayList(apiKey()))
                 .useDefaultResponseMessages(false)
                 .select()
+                .paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .paths(regex(DEFAULT_INCLUDE_PATTERN))
                 .build();
     }
