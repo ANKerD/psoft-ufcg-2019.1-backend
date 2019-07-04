@@ -1,4 +1,4 @@
-# UFCG Cursos Database
+# UFCG Cursos Database - backend
 
 #### Sobre a validade do token
 

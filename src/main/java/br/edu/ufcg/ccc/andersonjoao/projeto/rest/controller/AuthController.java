@@ -3,6 +3,7 @@ package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.UserModel;
+import br.edu.ufcg.ccc.andersonjoao.projeto.utils.EmailSender;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +26,13 @@ public class AuthController {
     private final int HOUR = 60 * MINUTE;
 
     private final String TOKEN_KEY = "banana";
-    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+)?$");
+    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+){1,3}?$");
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailSender emailSender;
 
     @ApiOperation(value="Registra um usuário")
     @PostMapping("/register")
@@ -67,6 +71,7 @@ public class AuthController {
         userModel.setPassword(userModel.getPassword().trim());
 
         UserModel userModelRegistered = userService.save(userModel);
+        emailSender.sendMail(userModel.getEmail());
 
         return this.authenticate(userModelRegistered);
     }
