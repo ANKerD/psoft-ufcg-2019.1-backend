@@ -1,6 +1,7 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
+import br.edu.ufcg.ccc.andersonjoao.projeto.exception.profile.NotFound;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Comment;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Subject;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
@@ -106,7 +107,7 @@ public class ProfileController {
         Comment comment = commentsService.findById(commentId);
 
         if (commentId == null || comment == null) {
-            throw new InvalidDataException("O comentário que está sendo removido não existe");
+            throw new NotFound("O comentário que está sendo removido não existe");
         }
 
         if (subjectId == null || subjectService.findById(subjectId) == null || !comment.getSubjectId().equals(subjectId)) {
