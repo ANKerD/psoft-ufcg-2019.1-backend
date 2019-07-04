@@ -26,7 +26,7 @@ public class AuthController {
     private final int HOUR = 60 * MINUTE;
 
     private final String TOKEN_KEY = "banana";
-    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+){1,3}?$");
+    private final Pattern emailPattern = Pattern.compile("^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+(\\.[a-z]+){0,3}?$");
 
     @Autowired
     private UserService userService;
