@@ -1,9 +1,9 @@
 package br.edu.ufcg.ccc.andersonjoao.projeto.rest.service;
 
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.dao.UserDAO;
-import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
 
 
 @Service
@@ -19,7 +19,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public User findByEmail(String email) { return this.userDAO.findByEmail(email);}
+    public UserModel findByEmail(String email) { return this.userDAO.findByEmail(email);}
 
-    public User save(User user) { return this.userDAO.save(user);}
+    public UserModel save(UserModel userModel) { return this.userDAO.save(userModel);}
 }

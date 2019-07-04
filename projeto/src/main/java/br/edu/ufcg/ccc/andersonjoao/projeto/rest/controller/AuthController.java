@@ -2,6 +2,7 @@ package br.edu.ufcg.ccc.andersonjoao.projeto.rest.controller;
 
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.auth.WrongCredentialsException;
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.UserModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.ApiOperation;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.UserService;
 
 import java.util.regex.Pattern;
@@ -32,59 +32,59 @@ public class AuthController {
 
     @ApiOperation(value="Registra um usuário")
     @PostMapping("/register")
-    public LoginResponse register(@RequestBody User user) {
+    public LoginResponse register(@RequestBody UserModel userModel) {
 
         // verificacoes
 
         // Verifica se senha satisfaz determinadas condicoes
-        if(user.getPassword() == null || user.getPassword().trim().length() == 0) {
+        if(userModel.getPassword() == null || userModel.getPassword().trim().length() == 0) {
             throw new InvalidDataException("Senha inválida!");
         }
 
         // Verifica se email satisfaz determinadas condicoes
-        if(user.getEmail() == null || !emailPattern.matcher(user.getEmail()).find()) {
+        if(userModel.getEmail() == null || !emailPattern.matcher(userModel.getEmail()).find()) {
             throw new InvalidDataException("Email inválido!");
         }
 
         // Verifica se firstName satisfaz determinadas condicoes
-        if(user.getFirstName() == null || user.getFirstName().trim().length() == 0) {
+        if(userModel.getFirstName() == null || userModel.getFirstName().trim().length() == 0) {
             throw new InvalidDataException("Primeiro nome inválido!");
         }
 
         // Verifica se lastName satisfaz determinadas condicoes
-        if(user.getLastName() == null || user.getLastName().trim().length() == 0) {
+        if(userModel.getLastName() == null || userModel.getLastName().trim().length() == 0) {
             throw new InvalidDataException("Último nome inválido!");
         }
 
         // Recupera o usuario
-        User authUser = userService.findByEmail(user.getEmail());
+        UserModel authUserModel = userService.findByEmail(userModel.getEmail());
 
         // Verifica se o email já está sendo utilizado
-        if(authUser != null) {
+        if(authUserModel != null) {
             throw new InvalidDataException("Já existe um usuario com esse email!");
         }
 
-        user.setPassword(user.getPassword().trim());
+        userModel.setPassword(userModel.getPassword().trim());
 
-        User userRegistered = userService.save(user);
+        UserModel userModelRegistered = userService.save(userModel);
 
-        return this.authenticate(userRegistered);
+        return this.authenticate(userModelRegistered);
     }
 
     @ApiOperation(value="Autentica um usuário")
     @PostMapping("/login")
-    public LoginResponse authenticate(@RequestBody User user) {
+    public LoginResponse authenticate(@RequestBody UserModel userModel) {
 
         // Recupera o usuario
-        User authUser = userService.findByEmail(user.getEmail());
+        UserModel authUserModel = userService.findByEmail(userModel.getEmail());
 
         // verificacoes
-        if(authUser == null || !authUser.getPassword().equals(user.getPassword().trim())) {
+        if(authUserModel == null || !authUserModel.getPassword().equals(userModel.getPassword().trim())) {
             throw new WrongCredentialsException("Usuario e/ou senha inválidos!");
         }
 
         String token = Jwts.builder().
-                setSubject(authUser.getEmail()).
+                setSubject(authUserModel.getEmail()).
                 signWith(SignatureAlgorithm.HS512, TOKEN_KEY).
                 setExpiration(new Date(System.currentTimeMillis() + 2 * HOUR))
                 .compact();

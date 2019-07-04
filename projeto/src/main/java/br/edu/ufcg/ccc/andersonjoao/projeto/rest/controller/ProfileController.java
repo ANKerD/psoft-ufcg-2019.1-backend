@@ -4,7 +4,7 @@ import br.edu.ufcg.ccc.andersonjoao.projeto.exception.InvalidDataException;
 import br.edu.ufcg.ccc.andersonjoao.projeto.exception.profile.NotFound;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Comment;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.Subject;
-import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.User;
+import br.edu.ufcg.ccc.andersonjoao.projeto.rest.model.UserModel;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.CommentService;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.SubjectService;
 import br.edu.ufcg.ccc.andersonjoao.projeto.rest.service.UserService;
@@ -91,8 +91,8 @@ public class ProfileController {
             newComment = commentsService.save(new Comment(content, userEmail, subjectId, comment.getAnswerTo()));
         }
 
-        User user = userService.findByEmail(userEmail);
-        String authorName = user.getFirstName() + " " + user.getLastName();
+        UserModel userModel = userService.findByEmail(userEmail);
+        String authorName = userModel.getFirstName() + " " + userModel.getLastName();
 
         CommentsWithFlag respComment = new CommentsWithFlag(newComment.getId(), content, authorName, comment.getAnswerTo(), true, true);
         return new ResponseEntity<>(respComment, HttpStatus.OK);
@@ -163,12 +163,12 @@ public class ProfileController {
     private ArrayList<CommentsWithFlag> getSubjectComments(String email, Long subjectId) {
         ArrayList resp = new ArrayList();
         for (Comment comm : commentsService.findBySubject(subjectId)) {
-            User user = userService.findByEmail(comm.getAuthorEmail());
+            UserModel userModel = userService.findByEmail(comm.getAuthorEmail());
             if (!comm.getActive()) {
                 comm.setContent("");
             }
 
-            resp.add(new CommentsWithFlag(comm.getId(), comm.getContent(), user.getFirstName() + " " + user.getLastName(), comm.getAnswerTo(), comm.getAuthorEmail().equals(email), comm.getActive()));
+            resp.add(new CommentsWithFlag(comm.getId(), comm.getContent(), userModel.getFirstName() + " " + userModel.getLastName(), comm.getAnswerTo(), comm.getAuthorEmail().equals(email), comm.getActive()));
         }
         return resp;
     }
