@@ -1,0 +1,6 @@
+br/edu/ufcg/ccc/andersonjoao/projeto/rest/controller/SubjectsController$SubjectsRankingResponse.class
+br/edu/ufcg/ccc/andersonjoao/projeto/exception/auth/NotAuthorizedException.class
+br/edu/ufcg/ccc/andersonjoao/projeto/rest/controller/SubjectsController$CommentsComparator.class
+br/edu/ufcg/ccc/andersonjoao/projeto/rest/controller/SubjectsController$CommentsPlusLikesComparator.class
+br/edu/ufcg/ccc/andersonjoao/projeto/exception/InvalidDataException.class
+br/edu/ufcg/ccc/andersonjoao/projeto/rest/controller/SubjectsController$LikesComparator.class
